@@ -567,6 +567,50 @@ const App: React.FC = () => {
         }
     }, []);
 
+    const handleUpdateNote = useCallback(async (logId: number, note: string): Promise<boolean> => {
+        if (!note.trim()) {
+            alert("A nota (apontamento) não pode estar vazia.");
+            return false;
+        }
+        try {
+            const { error } = await supabase.from('channel_logs').update({ log_entry: note.trim() }).eq('id', logId);
+            if (error) throw error;
+            return true;
+        } catch (error: any) {
+            console.error("Error updating note:", error);
+            let userMessage = "Erro ao atualizar o apontamento.";
+            if (error.message?.includes('security policy') || error.message?.includes('permission denied')) {
+                userMessage = `A operação foi bloqueada por uma política de segurança (RLS) na tabela "channel_logs".`;
+            } else {
+                userMessage += `\n\nCausa provável: ${error.message || 'Erro desconhecido.'}`;
+            }
+            alert(userMessage);
+            return false;
+        }
+    }, []);
+
+    const handleDeleteNote = useCallback(async (logId: number): Promise<boolean> => {
+        if (!window.confirm("Tem certeza que deseja excluir este apontamento? Esta ação não pode ser desfeita.")) {
+            return false;
+        }
+        try {
+            const { error } = await supabase.from('channel_logs').delete().eq('id', logId);
+            if (error) throw error;
+            return true;
+        } catch (error: any) {
+            console.error("Error deleting note:", error);
+            let userMessage = "Erro ao excluir o apontamento.";
+            if (error.message?.includes('security policy') || error.message?.includes('permission denied')) {
+                userMessage = `A operação foi bloqueada por uma política de segurança (RLS) na tabela "channel_logs".`;
+            } else {
+                userMessage += `\n\nCausa provável: ${error.message || 'Erro desconhecido.'}`;
+            }
+            alert(userMessage);
+            return false;
+        }
+    }, []);
+
+
     // --- Layout Handlers ---
     const handleSetLayout = useCallback(async (divisionId: number, newLayoutData: Partial<Omit<DivisionLayout, 'division_id' | 'id' | 'created_at'>>) => {
         requireAdmin(async () => {
@@ -770,6 +814,8 @@ const App: React.FC = () => {
                         channel={freshChannelForLogs}
                         onSaveNote={handleSaveNote}
                         onStatusChange={handleChannelStatusChange}
+                        onUpdateNote={handleUpdateNote}
+                        onDeleteNote={handleDeleteNote}
                     />
                 </>
             )}
