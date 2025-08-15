@@ -1,0 +1,5 @@
+{
+  "name": "Açotubo - Monitor de Câmeras",
+  "description": "Uma aplicação para monitorar o status das câmeras de segurança do Grupo Açotubo, gerenciar problemas e gerar relatórios para a gestão.",
+  "requestFramePermissions": []
+}

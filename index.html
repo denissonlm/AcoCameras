@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23CC0000'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 5.25h-9A2.25 2.25 0 0 0 2.25 7.5v9A2.25 2.25 0 0 0 4.5 18.75Z' /%3E%3C/svg%3E" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Açotubo - Monitor de Câmeras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              'acotubo-red': '#CC0000',
+              'acotubo-dark': '#1A1A1A',
+              'acotubo-gray': '#F0F2F5',
+              // Dark mode palette
+              'acotubo-orange': '#F97316',
+              'acotubo-dark-bg': '#121212',
+              'acotubo-dark-surface': '#27272A',
+              'acotubo-dark-border': '#3F3F46',
+              'acotubo-dark-text-primary': '#F4F4F5',
+              'acotubo-dark-text-secondary': '#A1A1AA',
+            },
+          }
+        }
+      }
+    </script>
+     <script>
+      // Prevents flash of unstyled content (FOUC)
+      (function() {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+    <style>
+      /* --- Custom Scrollbar Styles --- */
+      /* For Webkit browsers (Chrome, Safari, Edge) */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #e5e7eb; /* bg-gray-200 */
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #9ca3af; /* bg-gray-400 */
+        border-radius: 20px;
+        border: 2px solid #e5e7eb; /* bg-gray-200, to create padding */
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #6b7280; /* bg-gray-500 */
+      }
+
+      /* For Firefox */
+      /* The color values are thumb-color track-color */
+      html {
+        scrollbar-color: #9ca3af #e5e7eb;
+        scrollbar-width: thin;
+      }
+
+      /* Dark mode scrollbar styles */
+      .dark ::-webkit-scrollbar-track {
+        background: #121212; /* acotubo-dark-bg */
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background-color: #3F3F46; /* acotubo-dark-border */
+        border-color: #121212; /* acotubo-dark-bg */
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background-color: #52525b; /* zinc-600 */
+      }
+      .dark {
+        scrollbar-color: #3F3F46 #121212;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://esm.sh/recharts@3.0.0-alpha.9",
+    "react/": "https://esm.sh/react@^19.1.1/",
+    "react": "https://esm.sh/react@^19.1.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.13.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.55.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-200 dark:bg-acotubo-dark-bg">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
