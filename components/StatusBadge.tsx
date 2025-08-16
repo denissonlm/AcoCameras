@@ -32,7 +32,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${config.color}`}>
       <span role="img" aria-label={config.text}>{config.icon}</span>
       <span className="ml-1.5">{config.text}</span>
     </span>

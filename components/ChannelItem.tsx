@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Channel, CameraStatus } from '../types';
 import StatusBadge from './StatusBadge';
 import Tooltip from './Tooltip';
@@ -19,6 +19,27 @@ const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdi
     const [isMenuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const nameRef = useRef<HTMLParagraphElement>(null);
+    const [isTooltipEnabled, setTooltipEnabled] = useState(false);
+
+    // This effect checks if the channel name is overflowing and enables the tooltip only if it is.
+    // It also re-checks on window resize.
+    useLayoutEffect(() => {
+        const checkTruncation = () => {
+            const element = nameRef.current;
+            if (element) {
+                const isOverflowing = element.scrollWidth > element.clientWidth;
+                if (isTooltipEnabled !== isOverflowing) {
+                    setTooltipEnabled(isOverflowing);
+                }
+            }
+        };
+
+        checkTruncation();
+        window.addEventListener('resize', checkTruncation);
+        return () => window.removeEventListener('resize', checkTruncation);
+    }, [channel.name, isTooltipEnabled]);
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -59,18 +80,18 @@ const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdi
 
     return (
         <li className="flex items-center justify-between py-3 px-2 hover:bg-gray-50/80 dark:hover:bg-white/5 rounded-md transition-colors group">
-            <div className="flex items-center min-w-0">
+            <div className="flex items-center min-w-0 flex-1">
                 <span className="text-gray-400 dark:text-acotubo-dark-text-secondary/70 mr-3 flex-shrink-0" role="img" aria-label="Câmera">🎥</span>
-                 <Tooltip content={tooltipContent} className="min-w-0 flex-1" position={isFirst ? 'bottom' : 'top'}>
+                 <Tooltip content={tooltipContent} disabled={!isTooltipEnabled} className="min-w-0" position={isFirst ? 'bottom' : 'top'}>
                     <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-800 dark:text-acotubo-dark-text-primary truncate">{channel.name}</p>
+                        <p ref={nameRef} className="text-sm font-medium text-gray-800 dark:text-acotubo-dark-text-primary truncate">{channel.name}</p>
                         {channel.status !== CameraStatus.Online && channel.action_taken && (
                             <p className="text-xs text-gray-500 dark:text-acotubo-dark-text-secondary truncate">Ação: {channel.action_taken}</p>
                         )}
                     </div>
                 </Tooltip>
             </div>
-            <div className="flex items-center space-x-2 ml-4">
+            <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
                 <StatusBadge status={channel.status as CameraStatus} />
                 {isAdmin && (
                     <div className="relative" ref={menuRef}>
