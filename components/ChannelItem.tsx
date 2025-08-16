@@ -11,11 +11,12 @@ interface ChannelItemProps {
     onOpenLogbook: (channel: Channel) => void;
     onStatusChange: (channelId: number, newStatus: CameraStatus) => void;
     isAdmin: boolean;
+    isFirst?: boolean;
+    isLast?: boolean;
 }
 
-const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdit, onDelete, onOpenLogbook, onStatusChange, isAdmin }) => {
+const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdit, onDelete, onOpenLogbook, onStatusChange, isAdmin, isFirst, isLast }) => {
     const [isMenuOpen, setMenuOpen] = useState(false);
-    const [menuOpensUp, setMenuOpensUp] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -31,15 +32,7 @@ const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdi
         };
     }, [menuRef]);
 
-    const handleMenuToggle = () => {
-        if (!isMenuOpen && buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            // Approximate menu height is 200px. If less space below, open upwards.
-            const spaceBelow = window.innerHeight - rect.bottom;
-            setMenuOpensUp(spaceBelow < 200);
-        }
-        setMenuOpen(prev => !prev);
-    };
+    const handleMenuToggle = () => setMenuOpen(prev => !prev);
 
     const handleEdit = () => {
         onEdit(channel);
@@ -51,7 +44,7 @@ const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdi
         setMenuOpen(false);
     }
 
-    const menuPositionClass = menuOpensUp
+    const menuPositionClass = isLast
         ? 'origin-bottom-right bottom-full mb-2'
         : 'origin-top-right mt-2';
         
@@ -68,7 +61,7 @@ const ChannelItem: React.FC<ChannelItemProps> = ({ channel, onActionClick, onEdi
         <li className="flex items-center justify-between py-3 px-2 hover:bg-gray-50/80 dark:hover:bg-white/5 rounded-md transition-colors group">
             <div className="flex items-center min-w-0">
                 <span className="text-gray-400 dark:text-acotubo-dark-text-secondary/70 mr-3 flex-shrink-0" role="img" aria-label="Câmera">🎥</span>
-                 <Tooltip content={tooltipContent} className="min-w-0 flex-1">
+                 <Tooltip content={tooltipContent} className="min-w-0 flex-1" position={isFirst ? 'bottom' : 'top'}>
                     <div className="min-w-0">
                         <p className="text-sm font-medium text-gray-800 dark:text-acotubo-dark-text-primary truncate">{channel.name}</p>
                         {channel.status !== CameraStatus.Online && channel.action_taken && (

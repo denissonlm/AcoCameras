@@ -48,10 +48,10 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
     const availableChannels = device.channel_count - device.channels.length;
 
     return (
-        <div className="bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-gray-200 dark:border-acotubo-dark-border/40">
+        <div className="bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-gray-200 dark:border-acotubo-dark-border/40">
             <div 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="p-5 relative bg-gradient-to-br from-gray-700 to-acotubo-dark dark:from-acotubo-dark-surface dark:to-acotubo-dark-bg text-white flex justify-between items-start cursor-pointer group"
+                className="p-5 relative bg-gradient-to-br from-gray-700 to-acotubo-dark dark:from-acotubo-dark-surface dark:to-acotubo-dark-bg text-white flex justify-between items-start cursor-pointer group rounded-t-xl"
                 role="button"
                 aria-expanded={isExpanded}
                 aria-controls={`device-channels-${device.id}`}
@@ -104,42 +104,40 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                 </div>
             )}
 
-            <div 
+            <div
                 id={`device-channels-${device.id}`}
-                className={`transition-all duration-500 ease-in-out grid ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+                className={`transition-[max-height,opacity] duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
             >
-                <div className="overflow-hidden min-h-0">
-                    <div className="flex-grow p-2 flex flex-col">
-                        <div className="flex-grow">
-                            {sortedChannels.length > 0 ? (
-                                <ul className="divide-y divide-gray-100 dark:divide-acotubo-dark-border">
-                                    {sortedChannels.map(channel => (
-                                        <ChannelItem
-                                            key={channel.id}
-                                            channel={channel}
-                                            onActionClick={onActionClick}
-                                            onEdit={(ch) => onEditChannel(device.id, ch)}
-                                            onDelete={(chId) => onDeleteChannel(device.id, chId)}
-                                            onOpenLogbook={onOpenLogbook}
-                                            onStatusChange={onStatusChange}
-                                            isAdmin={isAdmin}
-                                        />
-                                    ))}
-                                </ul>
-                            ) : (
-                                <div className="text-center p-8 text-gray-500 dark:text-acotubo-dark-text-secondary">
-                                     <span className="text-4xl" role="img" aria-label="Nenhum canal">🧐</span>
-                                    <p className="text-sm mt-2 font-medium">Nenhum canal cadastrado.</p>
-                                    {isAdmin && <p className="text-xs mt-1">Use os botões abaixo para adicionar.</p>}
-                                </div>
-                            )}
+                <div className="p-2">
+                    {sortedChannels.length > 0 ? (
+                        <ul className="divide-y divide-gray-100 dark:divide-acotubo-dark-border">
+                            {sortedChannels.map((channel, index) => (
+                                <ChannelItem
+                                    key={channel.id}
+                                    channel={channel}
+                                    isFirst={index === 0}
+                                    isLast={index === sortedChannels.length - 1}
+                                    onActionClick={onActionClick}
+                                    onEdit={(ch) => onEditChannel(device.id, ch)}
+                                    onDelete={(chId) => onDeleteChannel(device.id, chId)}
+                                    onOpenLogbook={onOpenLogbook}
+                                    onStatusChange={onStatusChange}
+                                    isAdmin={isAdmin}
+                                />
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="text-center p-8 text-gray-500 dark:text-acotubo-dark-text-secondary">
+                             <span className="text-4xl" role="img" aria-label="Nenhum canal">🧐</span>
+                            <p className="text-sm mt-2 font-medium">Nenhum canal cadastrado.</p>
+                            {isAdmin && <p className="text-xs mt-1">Use os botões abaixo para adicionar.</p>}
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
             {isAdmin && (
-                <div className="p-2 border-t border-gray-100 dark:border-acotubo-dark-border bg-gray-50 dark:bg-acotubo-dark-surface/50">
+                <div className="p-2 border-t border-gray-100 dark:border-acotubo-dark-border bg-gray-50 dark:bg-acotubo-dark-surface/50 rounded-b-xl">
                      {availableChannels > 0 ? (
                         <div className="flex flex-col sm:flex-row gap-2">
                             <button
@@ -157,7 +155,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                             >
                                 {isAutoCreating ? (
                                     <>
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                                         Criando...
                                     </>
                                 ) : (

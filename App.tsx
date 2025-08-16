@@ -121,11 +121,12 @@ const App: React.FC = () => {
                 console.log('[Realtime] Successfully subscribed to database changes.');
             }
             if (status === 'CHANNEL_ERROR') {
-                const errorMessage = err instanceof Error 
-                    ? err.message 
-                    : (err ? JSON.stringify(err) : 'An unknown error occurred.');
+                 const errDetails = err ? (err instanceof Error ? err.message : JSON.stringify(err)) : null;
+                const errorMessage = errDetails 
+                    ? `Connection failed: ${errDetails}` 
+                    : 'An unknown error occurred. This is likely a Supabase configuration issue.';
                 
-                console.error(`[Realtime] Subscription Error: ${errorMessage}`);
+                console.error(`[Realtime] Subscription Error: ${errorMessage} See the detailed warning below for resolution steps.`);
                 console.warn(
                     `[Realtime] ACTION REQUIRED: The real-time connection failed. This is almost always due to a missing configuration in your Supabase project.\n\n` +
                     `1. Go to your Supabase Dashboard.\n` +
@@ -693,7 +694,7 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-200 dark:bg-acotubo-dark-bg font-sans">
+        <div className="h-screen bg-gray-200 dark:bg-acotubo-dark-bg font-sans flex flex-col">
             <Header 
               onAddDeviceClick={() => handleOpenDeviceModal()} 
               onReportClick={() => setGeneratingReport(true)}
@@ -707,9 +708,9 @@ const App: React.FC = () => {
             />
             <Navigation currentView={view} onViewChange={setView} />
             
-            <main className="container mx-auto max-w-screen-2xl p-4 sm:p-6 lg:p-8">
+            <main className="container mx-auto max-w-screen-2xl p-4 sm:p-6 lg:p-8 flex-grow flex flex-col min-h-0">
                 {view === 'dashboard' && (
-                  <>
+                  <div className="h-full overflow-y-auto">
                     <Dashboard 
                         stats={stats}
                         onStatusFilterChange={handleStatusFilterChange} 
@@ -758,7 +759,7 @@ const App: React.FC = () => {
                             );
                         })}
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {view === 'layout' && (

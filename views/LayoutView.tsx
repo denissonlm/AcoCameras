@@ -92,7 +92,7 @@ const LayoutView: React.FC<LayoutViewProps> = ({ divisions, devices, layouts, on
 
     if (isMobile) {
         return (
-            <div className="flex flex-col items-center justify-center text-center bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg p-8 h-[calc(100vh-220px)] border border-gray-200 dark:border-acotubo-dark-border/40">
+            <div className="flex flex-col items-center justify-center text-center bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg p-8 h-full border border-gray-200 dark:border-acotubo-dark-border/40">
                 <span className="text-6xl" role="img" aria-label="Computador">🖥️</span>
                 <h3 className="mt-4 text-xl font-semibold text-acotubo-dark dark:text-acotubo-dark-text-primary">
                     Visualização Indisponível
@@ -106,7 +106,7 @@ const LayoutView: React.FC<LayoutViewProps> = ({ divisions, devices, layouts, on
 
 
     return (
-        <div className="flex flex-col md:flex-row gap-8 h-[calc(100vh-220px)]">
+        <div className="flex flex-col md:flex-row gap-8 flex-grow w-full">
             {/* Main Content: Canvas */}
             <div className="flex-grow bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg p-4 flex flex-col border border-gray-200 dark:border-acotubo-dark-border/40">
                 <div className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden ${isSidebarCollapsed ? 'max-h-0 opacity-0 mb-0' : 'max-h-16 opacity-100 mb-4'}`}>
