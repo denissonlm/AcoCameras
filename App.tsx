@@ -121,19 +121,23 @@ const App: React.FC = () => {
                 console.log('[Realtime] Successfully subscribed to database changes.');
             }
             if (status === 'CHANNEL_ERROR') {
-                 const errDetails = err ? (err instanceof Error ? err.message : JSON.stringify(err)) : null;
-                const errorMessage = errDetails 
-                    ? `Connection failed: ${errDetails}` 
-                    : 'An unknown error occurred. This is likely a Supabase configuration issue.';
+                const errDetails = err ? (err instanceof Error ? err.message : JSON.stringify(err)) : 'An unknown error occurred.';
                 
-                console.error(`[Realtime] Subscription Error: ${errorMessage} See the detailed warning below for resolution steps.`);
-                console.warn(
-                    `[Realtime] ACTION REQUIRED: The real-time connection failed. This is almost always due to a missing configuration in your Supabase project.\n\n` +
-                    `1. Go to your Supabase Dashboard.\n` +
-                    `2. Navigate to Database -> Replication.\n` +
-                    `3. Ensure that replication is enabled for ALL of the following tables: \n` +
-                    `   -> ${tables.join(', ')}\n\n` +
-                    `The app will function without real-time updates, but you will need to refresh the page to see changes.`
+                console.error(
+                    `[Realtime] Subscription Error: Connection failed. This is almost always a Supabase project configuration issue.\n\n` +
+                    `  DETAILS: ${errDetails}\n\n` +
+                    `  TROUBLESHOOTING STEPS:\n` +
+                    `  Please check the following two settings in your Supabase dashboard:\n\n` +
+                    `  1. DATABASE REPLICATION:\n` +
+                    `     - Go to: Database > Replication\n` +
+                    `     - In the "Source" section, check under "Tables".\n` +
+                    `     - Ensure that ALL of the following tables are enabled for replication:\n` +
+                    `       -> ${tables.join(', ')}\n\n` +
+                    `  2. ROW LEVEL SECURITY (RLS):\n` +
+                    `     - If RLS is enabled on any of the tables listed above, you MUST create a 'SELECT' policy.\n` +
+                    `     - The policy must grant read access to the 'anon' role (for public access) or the 'authenticated' role.\n` +
+                    `     - A missing or incorrect RLS policy will silently block real-time updates.\n\n` +
+                    `The application will continue to work, but you must manually refresh the page to see new data.`
                 );
             }
         });
