@@ -708,9 +708,9 @@ const App: React.FC = () => {
             />
             <Navigation currentView={view} onViewChange={setView} />
             
-            <main className="container mx-auto max-w-screen-2xl p-4 sm:p-6 lg:p-8 flex-grow flex flex-col min-h-0">
+            <main className="container mx-auto max-w-screen-2xl flex-grow flex flex-col min-h-0">
                 {view === 'dashboard' && (
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
                     <Dashboard 
                         stats={stats}
                         onStatusFilterChange={handleStatusFilterChange} 
