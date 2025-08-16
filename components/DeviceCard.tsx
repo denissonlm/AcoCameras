@@ -106,7 +106,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
 
             <div
                 id={`device-channels-${device.id}`}
-                className={`transition-[max-height,opacity] duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+                className={`transition-[max-height,opacity] duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
             >
                 <div className="p-2">
                     {sortedChannels.length > 0 ? (
