@@ -19,8 +19,6 @@ interface DeviceCardProps {
     isAdmin: boolean;
 }
 
-const VISIBLE_CHANNELS_LIMIT = 5;
-
 const DeviceCard: React.FC<DeviceCardProps> = ({ 
     device, 
     divisionName,
@@ -47,16 +45,24 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
     }, [device.channels]);
     
     const hasOfflineCamera = sortedChannels.some(c => c.status === CameraStatus.Offline);
-    const canCollapse = sortedChannels.length > VISIBLE_CHANNELS_LIMIT;
-    const channelsToShow = canCollapse && !isExpanded ? sortedChannels.slice(0, VISIBLE_CHANNELS_LIMIT) : sortedChannels;
-    const remainingChannels = sortedChannels.length - VISIBLE_CHANNELS_LIMIT;
     const availableChannels = device.channel_count - device.channels.length;
 
     return (
         <div className="bg-white dark:bg-acotubo-dark-surface rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-gray-200 dark:border-acotubo-dark-border/40">
-            <div className="p-5 relative bg-gradient-to-br from-gray-700 to-acotubo-dark dark:from-acotubo-dark-surface dark:to-acotubo-dark-bg text-white flex justify-between items-start">
+            <div 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-5 relative bg-gradient-to-br from-gray-700 to-acotubo-dark dark:from-acotubo-dark-surface dark:to-acotubo-dark-bg text-white flex justify-between items-start cursor-pointer group"
+                role="button"
+                aria-expanded={isExpanded}
+                aria-controls={`device-channels-${device.id}`}
+            >
                 <div className="min-w-0">
-                    <h3 className="text-lg font-bold text-white dark:text-acotubo-dark-text-primary truncate">{device.name}</h3>
+                    <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-white dark:text-acotubo-dark-text-primary truncate">{device.name}</h3>
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className={`w-4 h-4 text-white/70 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </div>
                     <p className="text-sm text-gray-300 dark:text-acotubo-dark-text-secondary truncate">{device.location}</p>
                     <p className="text-xs text-gray-400 dark:text-acotubo-dark-text-secondary/80 mt-1 truncate">
                         <span className="font-medium opacity-80">{device.type} ({device.channels.length}/{device.channel_count})</span>
@@ -74,14 +80,14 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                     {isAdmin && (
                         <div className="relative z-10 flex items-center">
                             <button 
-                              onClick={() => onEditDevice(device)}
+                              onClick={(e) => { e.stopPropagation(); onEditDevice(device); }}
                               className="text-gray-300 hover:text-white dark:text-acotubo-dark-text-secondary dark:hover:text-acotubo-dark-text-primary p-2 rounded-full hover:bg-white/10 transition-colors"
                               aria-label={`Editar dispositivo ${device.name}`}
                               >
                                 <span role="img" aria-label="Editar">✏️</span>
                             </button>
                             <button 
-                              onClick={() => onDeleteDevice(device.id)}
+                              onClick={(e) => { e.stopPropagation(); onDeleteDevice(device.id); }}
                               className="text-gray-300 hover:text-acotubo-red dark:text-acotubo-dark-text-secondary dark:hover:text-acotubo-orange p-2 rounded-full hover:bg-white/10 transition-colors"
                               aria-label={`Excluir dispositivo ${device.name}`}
                               >
@@ -91,43 +97,47 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                     )}
                 </div>
             </div>
-            <div className="flex-grow p-2 flex flex-col">
-                <div className="flex-grow">
-                    {sortedChannels.length > 0 ? (
-                        <ul className="divide-y divide-gray-100 dark:divide-acotubo-dark-border">
-                            {channelsToShow.map(channel => (
-                                <ChannelItem
-                                    key={channel.id}
-                                    channel={channel}
-                                    onActionClick={onActionClick}
-                                    onEdit={(ch) => onEditChannel(device.id, ch)}
-                                    onDelete={(chId) => onDeleteChannel(device.id, chId)}
-                                    onOpenLogbook={onOpenLogbook}
-                                    onStatusChange={onStatusChange}
-                                    isAdmin={isAdmin}
-                                />
-                            ))}
-                        </ul>
-                    ) : (
-                        <div className="text-center p-8 text-gray-500 dark:text-acotubo-dark-text-secondary">
-                             <span className="text-4xl" role="img" aria-label="Nenhum canal">🧐</span>
-                            <p className="text-sm mt-2 font-medium">Nenhum canal cadastrado.</p>
-                            {isAdmin && <p className="text-xs mt-1">Use os botões abaixo para adicionar.</p>}
-                        </div>
-                    )}
+            
+            {isAdmin && availableChannels > 0 && (
+                <div className="px-5 py-1.5 text-xs text-center font-semibold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/30 border-b border-t border-gray-100 dark:border-acotubo-dark-border/50">
+                    {availableChannels} {availableChannels === 1 ? 'canal disponível' : 'canais disponíveis'}
                 </div>
+            )}
 
-                {canCollapse && (
-                    <div className="py-2 text-center border-t border-gray-100 dark:border-acotubo-dark-border">
-                        <button
-                            onClick={() => setIsExpanded(!isExpanded)}
-                            className="px-3 py-1 text-xs font-semibold text-acotubo-red dark:text-acotubo-orange hover:bg-acotubo-orange/5 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-acotubo-red dark:focus:ring-acotubo-orange transition-colors"
-                        >
-                            {isExpanded ? 'Mostrar menos' : `Mostrar mais ${remainingChannels} câmeras...`}
-                        </button>
+            <div 
+                id={`device-channels-${device.id}`}
+                className={`transition-all duration-500 ease-in-out grid ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+            >
+                <div className="overflow-hidden min-h-0">
+                    <div className="flex-grow p-2 flex flex-col">
+                        <div className="flex-grow">
+                            {sortedChannels.length > 0 ? (
+                                <ul className="divide-y divide-gray-100 dark:divide-acotubo-dark-border">
+                                    {sortedChannels.map(channel => (
+                                        <ChannelItem
+                                            key={channel.id}
+                                            channel={channel}
+                                            onActionClick={onActionClick}
+                                            onEdit={(ch) => onEditChannel(device.id, ch)}
+                                            onDelete={(chId) => onDeleteChannel(device.id, chId)}
+                                            onOpenLogbook={onOpenLogbook}
+                                            onStatusChange={onStatusChange}
+                                            isAdmin={isAdmin}
+                                        />
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="text-center p-8 text-gray-500 dark:text-acotubo-dark-text-secondary">
+                                     <span className="text-4xl" role="img" aria-label="Nenhum canal">🧐</span>
+                                    <p className="text-sm mt-2 font-medium">Nenhum canal cadastrado.</p>
+                                    {isAdmin && <p className="text-xs mt-1">Use os botões abaixo para adicionar.</p>}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                )}
+                </div>
             </div>
+
             {isAdmin && (
                 <div className="p-2 border-t border-gray-100 dark:border-acotubo-dark-border bg-gray-50 dark:bg-acotubo-dark-surface/50">
                      {availableChannels > 0 ? (
@@ -147,7 +157,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                             >
                                 {isAutoCreating ? (
                                     <>
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                                         Criando...
                                     </>
                                 ) : (
