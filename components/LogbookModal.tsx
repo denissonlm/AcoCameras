@@ -127,12 +127,11 @@ const LogEntry: React.FC<{
 
 const LogbookModal: React.FC<LogbookModalProps> = ({ isOpen, onClose, channel, onSaveNote, onStatusChange, onUpdateNote, onDeleteNote }) => {
     const [logs, setLogs] = useState<ChannelLog[]>([]);
-    const [loadingLogs, setLoadingLogs] = useState(false);
+    const [loadingLogs, setLoadingLogs] = useState(true);
     const [newNote, setNewNote] = useState('');
     const [isSavingNote, setIsSavingNote] = useState(false);
 
     const fetchLogs = useCallback(async (channelId: number) => {
-        setLoadingLogs(true);
         try {
             const { data, error } = await supabase
                 .from('channel_logs')
@@ -153,14 +152,17 @@ const LogbookModal: React.FC<LogbookModalProps> = ({ isOpen, onClose, channel, o
     useEffect(() => {
         if (isOpen && channel) {
             fetchLogs(channel.id);
-        } else {
+        } else if (!isOpen) {
+            // Fully reset state when the modal is closed to ensure it's fresh on reopen
             setLogs([]);
             setNewNote('');
+            setLoadingLogs(true);
         }
     }, [isOpen, channel, fetchLogs]);
 
     const handleActionComplete = useCallback(() => {
         if (channel) {
+            setLoadingLogs(true);
             fetchLogs(channel.id);
         }
     }, [channel, fetchLogs]);
@@ -175,6 +177,7 @@ const LogbookModal: React.FC<LogbookModalProps> = ({ isOpen, onClose, channel, o
 
         if (success) {
             setNewNote('');
+            setLoadingLogs(true);
             fetchLogs(channel.id);
         }
     };
