@@ -119,14 +119,18 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, onStatusFilterChange, acti
         onActionFilterChange(null);
     }
     
-    const tooltipStyle = {
+    const labelTextColor = theme === 'dark' ? '#F4F4F5' : '#1F2937';
+
+    const tooltipContentStyle = {
         backgroundColor: theme === 'dark' ? '#27272A' : '#FFFFFF',
         borderColor: theme === 'dark' ? '#3F3F46' : '#E5E7EB',
         borderRadius: '8px', 
-        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
     };
-    
-    const labelTextColor = theme === 'dark' ? '#A1A1AA' : '#4B5563';
+
+    const tooltipItemStyle = {
+      color: labelTextColor
+    };
 
     // Dynamic height for the division bar chart to enable scrolling
     const divisionChartHeight = Math.max(280, (divisionChartData.length || 0) * 35);
@@ -215,7 +219,7 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, onStatusFilterChange, acti
                                             />
                                         ))}
                                     </Pie>
-                                    <Tooltip formatter={(value, name) => [`${value} Câmeras`, name]} contentStyle={tooltipStyle} />
+                                    <Tooltip formatter={(value, name) => [`${value} Câmeras`, name]} contentStyle={tooltipContentStyle} itemStyle={tooltipItemStyle} />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
@@ -241,7 +245,7 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, onStatusFilterChange, acti
                                         width={150}
                                         tick={{ fill: labelTextColor, fontSize: '12px' }}
                                     />
-                                    <Tooltip cursor={{fill: 'rgba(206, 206, 206, 0.2)'}} contentStyle={tooltipStyle}/>
+                                    <Tooltip cursor={{fill: 'rgba(206, 206, 206, 0.2)'}} contentStyle={tooltipContentStyle} itemStyle={tooltipItemStyle}/>
                                     <Bar dataKey="value" name="Câmeras" barSize={20} radius={[0, 8, 8, 0]} onClick={(data: any) => onDivisionFilterChange(data.id)}>
                                         <LabelList dataKey="value" position="right" offset={8} style={{ fill: labelTextColor, fontSize: '12px', fontWeight: '500' }} />
                                         {divisionChartData.map((entry, index) => (
@@ -297,7 +301,7 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, onStatusFilterChange, acti
                                             />
                                         ))}
                                     </Pie>
-                                    <Tooltip formatter={(value, name) => [`${value} Câmeras`, name]} contentStyle={tooltipStyle} />
+                                    <Tooltip formatter={(value, name) => [`${value} Câmeras`, name]} contentStyle={tooltipContentStyle} itemStyle={tooltipItemStyle} />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
